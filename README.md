@@ -9,3 +9,6 @@ Filipe Coelho de Lima Duarte
 José Flávio
 
 Replicação do artigo Extreme learning machine ensemble model for time series forecasting boosted by PSO: Application to an electric consumption problem
+
+ELM + Weighted averagin Ensemble + PSO
+
