@@ -12,3 +12,4 @@ Replicação do artigo Extreme learning machine ensemble model for time series f
 
 ELM + Weighted averagin Ensemble + PSO
 
+A função Loss é o RMSE = $\sqrt{\frac{1}{F}\sum_{h=1}^{F}(\hat{Y}_h - Y_h)^2}$
