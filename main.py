@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-from utils import series_to_supervised
+from utils import series_to_supervised, gera_pool, pred_pool
 from sklearn import preprocessing
 # usar o arg squared = True para calcular o RMSE
 
@@ -46,13 +46,12 @@ elm.fit(X_treino, Y_treino)
 # primeira pred
 Y_pred = np.empty(Y_teste.shape)
 Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
-
+X_teste_pred_pool = np.copy(X_teste_pred)
 for i in range(1,Y_teste.shape[0]):
     X_teste_pred[:, n_in+i-1] = Y_pred[i-1] 
     X_teste_temp = X_teste_pred[:,i:i+n_in]
     Y_pred[i] = elm.predict(X_teste_temp)
 
-# Y_pred = elm.predict(X_teste)
 ## RMSE de teste
 # retornar para a escala normal
 Y_teste_desnorm = scaler.inverse_transform(Y_teste)
@@ -72,6 +71,18 @@ plt.title('Teste')
 plt.show()
 
 #TODO: Gerar os modelos ELM
+### Utilizar a função gera_pool
+pool_size = 100
+elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
+predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
+
+# scaler inverse
+predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_pool]
+
+# calcular RMSE
+RMSE_pool = [mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm]
+
+print('RMSE_pool\n', RMSE_pool)
 
 #TODO: Ordenar ELM pelo erro
 

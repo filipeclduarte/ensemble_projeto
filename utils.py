@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from ELM import *
 
 def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	"""
@@ -33,6 +34,32 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	if dropnan:
 		agg.dropna(inplace=True)
 	return agg
+
+#TODO: implementar função que gera o pool de ELM
+
+def gera_pool(N, n_h, X, Y):
+	pool = []
+	for _ in range(N):
+		mod = ELMRegressor(n_h)
+		mod.fit(X,Y)
+		pool.append(mod)
+	return pool
+
+def pred_pool(pool, n_in, Y_teste, X_teste):
+	predictions = []
+	for p in pool:
+		X_teste_pred = np.copy(X_teste)
+		Y_pred = np.empty(Y_teste.shape)
+		Y_pred[0] = p.predict(X_teste_pred[:,:n_in])
+
+		for i in range(1,Y_teste.shape[0]):
+			X_teste_pred[:, n_in+i-1] = Y_pred[i-1]
+			X_teste_temp = X_teste_pred[:,i:i+n_in]
+			Y_pred[i] = p.predict(X_teste_temp)
+		predictions.append(Y_pred)
+
+	return predictions
+	
 
 #TODO: Implementar função que será otimizada pelo algoritmo PSO
 #### Essa função vai pegar os pesos, normalizá-los (wi_norm = wi/W), calcular a média ponderada e o erro RMSE
