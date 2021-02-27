@@ -22,7 +22,7 @@ n_in = 10
 ## treinamento as 1000 primeiras obs
 treino = df[:1000]
 teste = df[1000:]
-X_teste_pred = df[(1000-n_in):].T# pegando as 10 últimas obs de treinamento
+X_teste_pred = df[(1000-n_in):].T # pegando as 10 últimas obs de treinamento até o final
 
 # Estruturar os dados
 ## transformar o problema de série em supervised learning
@@ -45,11 +45,11 @@ elm.fit(X_treino, Y_treino)
 # primeira pred
 Y_pred = np.empty(Y_teste.shape)
 Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
+# X_teste_pred[:, n_in] = Y_pred[0]
 
 for i in range(1,Y_teste.shape[0]):
-    # andar a janela
+    X_teste_pred[:, n_in+i-1] = Y_pred[i-1] 
     X_teste_temp = X_teste_pred[:,i:i+n_in]
-    X_teste_temp[:, -1] = Y_pred[i-1] # para a quantidade de obs de testee
     Y_pred[i] = elm.predict(X_teste_temp)
 
 # Y_pred = elm.predict(X_teste)
