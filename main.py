@@ -45,7 +45,6 @@ elm.fit(X_treino, Y_treino)
 # primeira pred
 Y_pred = np.empty(Y_teste.shape)
 Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
-# X_teste_pred[:, n_in] = Y_pred[0]
 
 for i in range(1,Y_teste.shape[0]):
     X_teste_pred[:, n_in+i-1] = Y_pred[i-1] 
