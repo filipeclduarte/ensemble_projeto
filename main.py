@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from utils import series_to_supervised
+from sklearn import preprocessing
 # usar o arg squared = True para calcular o RMSE
 
 # importar ELM
@@ -13,18 +14,20 @@ import pyswarms as ps
 
 # importando dados Santa Fe
 df_sf = pd.read_csv('dados/df_santa_fe.csv')
+scaler = preprocessing.StandardScaler().fit(df_sf['x'].values.reshape(-1,1))
+df = scaler.transform(df_sf['x'].values.reshape(-1,1))
 ## treinamento as 1000 primeiras obs
-df_treino = df_sf['x'].iloc[:1000].values
-df_teste = df_sf['x'].iloc[1000:].values
+treino = df[:1000]
+teste = df[1000:]
 
 # Estruturar os dados
 ## transformar o problema de série em supervised learning
 ### testando com 10 obs passadas
-df_treino_sup = series_to_supervised(df_treino.reshape(-1,1), n_in=10)
+df_treino_sup = series_to_supervised(treino.reshape(-1,1), n_in=10)
 X_treino = df_treino_sup.drop(columns='var1(t)').values
 Y_treino = df_treino_sup['var1(t)'].values
 
-df_teste_sup = series_to_supervised(df_teste.reshape(-1,1), n_in=10)
+df_teste_sup = series_to_supervised(teste.reshape(-1,1), n_in=10)
 X_teste = df_teste_sup.drop(columns='var1(t)').values
 Y_teste = df_teste_sup['var1(t)'].values
 
@@ -33,6 +36,18 @@ Y_teste = df_teste_sup['var1(t)'].values
 elm = ELMRegressor(10)
 elm.fit(X_treino, Y_treino)
 
+## pred
+Y_pred = elm.predict(X_teste)
+## RMSE de teste
+RMSE = mean_squared_error(Y_teste, Y_pred, squared = True)
+print(f'RMSE = {RMSE}')
+
+## Plotar 
+plt.plot(Y_teste, label='Real')
+plt.plot(Y_pred, label='Prediction')
+plt.legend()
+plt.title('Teste')
+plt.show()
 # Ordenar ELM pelo erro
 
 # iniciar um laço de repetição para testar o enesemble para 1, 2, ..., N modelos
