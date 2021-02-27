@@ -14,8 +14,11 @@ import pyswarms as ps
 
 # importando dados Santa Fe
 df_sf = pd.read_csv('dados/df_santa_fe.csv')
+
+# normalização gaussiana
 scaler = preprocessing.StandardScaler().fit(df_sf['x'].values.reshape(-1,1))
 df = scaler.transform(df_sf['x'].values.reshape(-1,1))
+
 ## treinamento as 1000 primeiras obs
 treino = df[:1000]
 teste = df[1000:]
@@ -48,7 +51,13 @@ plt.plot(Y_pred, label='Prediction')
 plt.legend()
 plt.title('Teste')
 plt.show()
-# Ordenar ELM pelo erro
+
+#TODO: Gerar os modelos ELM
+
+#TODO: Ordenar ELM pelo erro
+
+#TODO: Adicionar um modelo por vez ao ensemble. a cada entrada de modelo, otimizar com PSO
+
 
 # iniciar um laço de repetição para testar o enesemble para 1, 2, ..., N modelos
 ## Utilizar o PSO para otimizar os pesos dos modelos ELM na combinação (média ponderada)

@@ -33,3 +33,7 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	if dropnan:
 		agg.dropna(inplace=True)
 	return agg
+
+#TODO: Implementar função que será otimizada pelo algoritmo PSO
+#### Essa função vai pegar os pesos, normalizá-los (wi_norm = wi/W), calcular a média ponderada e o erro RMSE
+ 
