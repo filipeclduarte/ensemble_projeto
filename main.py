@@ -36,8 +36,9 @@ X_teste = df_teste_sup.drop(columns='var1(t)').values
 Y_teste = df_teste_sup['var1(t)'].values
 
 # Treinar ELM
-## Testando com 10 neurônios na camada escondida
-elm = ELMRegressor(n_in)
+## Testando com 20 neurônios na camada escondida
+n_h = 20
+elm = ELMRegressor(n_h)
 elm.fit(X_treino, Y_treino)
 
 ## pred
