@@ -23,6 +23,7 @@ Lembrar de normalizar os pesos entre 0 e 1 antes de avaliar a função de aptid�
 
 Parâmetros do PSO:
 
+* 100 iterações
 * 100 particles
 * w = 0.7298
 * c1 e c2 = 1.49618
