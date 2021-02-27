@@ -54,12 +54,19 @@ for i in range(1,Y_teste.shape[0]):
 
 # Y_pred = elm.predict(X_teste)
 ## RMSE de teste
-RMSE = mean_squared_error(Y_teste, Y_pred.reshape(-1,1), squared = True)
+# retornar para a escala normal
+Y_teste_desnorm = scaler.inverse_transform(Y_teste)
+Y_pred_desnorm = scaler.inverse_transform(Y_pred)
+
+print(Y_teste_desnorm)
+print(Y_pred_desnorm)
+
+RMSE = mean_squared_error(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1), squared = True)
 print(f'RMSE = {RMSE}')
 
 ## Plotar 
-plt.plot(Y_teste, label='Real')
-plt.plot(Y_pred.reshape(-1,1), label='Prediction')
+plt.plot(Y_teste_desnorm.reshape(-1,1), label='Real')
+plt.plot(Y_pred_desnorm.reshape(-1,1), label='Prediction')
 plt.legend()
 plt.title('Teste')
 plt.show()
