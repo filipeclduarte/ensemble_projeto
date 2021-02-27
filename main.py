@@ -49,9 +49,6 @@ Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
 for i in range(1,Y_teste.shape[0]):
     # andar a janela
     X_teste_temp = X_teste_pred[:,i:i+n_in]
-    if i == 1:
-        print('X_teste_temp.shape = ', X_teste_temp.shape)
-
     X_teste_temp[:, -1] = Y_pred[i-1] # para a quantidade de obs de testee
     Y_pred[i] = elm.predict(X_teste_temp)
 
