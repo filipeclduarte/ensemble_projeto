@@ -41,8 +41,7 @@ n_h = 20
 elm = ELMRegressor(n_h)
 elm.fit(X_treino, Y_treino)
 
-## pred
-#TODO: para teste faço a previsão e incorpor na série de teste para prever os próximos etc
+# Previsões
 # primeira pred
 Y_pred = np.empty(Y_teste.shape)
 Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
@@ -70,8 +69,7 @@ plt.legend()
 plt.title('Teste')
 plt.show()
 
-#TODO: Gerar os modelos ELM
-### Utilizar a função gera_pool
+# Utilizar a função gera_pool
 pool_size = 100
 elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
 predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
@@ -80,9 +78,12 @@ predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_pool]
 
 # calcular RMSE
-RMSE_pool = [mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm]
-
+RMSE_pool = np.array([mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm])
 print('RMSE_pool\n', RMSE_pool)
+print('Argmin: ', RMSE_pool.argmin())
+print('RMSE min: ', RMSE_pool.min())
+print('RMSE médio: ', RMSE_pool.mean())
+print('RMSE std: ', RMSE_pool.std(ddof=1))
 
 #TODO: Ordenar ELM pelo erro
 
