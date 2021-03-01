@@ -4,20 +4,24 @@ Projeto da disciplina de Sistemas de Múltiplos Classificadores
 
 Alunos: 
 
-Filipe Coelho de Lima Duarte
+* Filipe Coelho de Lima Duarte
 
-José Flávio
+* José Flávio
+
 
 Replicação do artigo Extreme learning machine ensemble model for time series forecasting boosted by PSO: Application to an electric consumption problem
 
-ELM + Weighted averagin Ensemble + PSO
+Método:
+* ELM
+* Weighted averagin Ensemble
+* PSO
 
 A função Loss é o RMSE.
 
 Configuração da ELM:
 
+TODO: elaborar a topologia da rede e criação do ensemble (sequencial -> melhor ELM primeiro ...)
 * step size (qtd de neurônios na camada de entrada): [10, 20, ..., 90, 100] 
-
 
 Lembrar de normalizar os pesos entre 0 e 1 antes de avaliar a função de aptidão.
 
