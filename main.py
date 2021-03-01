@@ -172,7 +172,41 @@ print('NMSE médio: ', NMSE_pool.mean())
 print('NMSE mediano: ', np.quantile(NMSE_pool,0.5))
 print('NMSE std: ', NMSE_pool.std(ddof=1))
 
+print('\nInicializar PSO')
+print('--------------------')
 
+# Initialize swarm
+
+Y_pred_desnorm = np.array(predictions_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
+
+def weighted_average_ensemble(p):
+	res = p * Y_pred_desnorm
+	return res
+
+def forward(pesos):
+
+	Y_pred = weighted_average_ensemble(pesos)
+	loss = mean_squared_error(Y_teste, Y_pred, squared=True)
+	return loss
+
+
+def f(x):
+	"""
+	Higher-level method to do the fitness in the whole swarm
+	"""
+
+	n_particles = x.shape[0]
+	j = [forward(x[i]) for i in range(n_particles)]
+	return np.array(j)
+	
+
+options = {'c1': 1.49618, 'c2': 1.49618, 'w':0.7298}
+optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=pool_size, options=options)
+# Perform optimization
+cost, pos = optimizer.optimize(f, iters=100)
+
+print('cost: ', cost)
+print('pos: ', pos)
 #TODO: Ordenar ELM pelo erro
 
 #TODO: Adicionar um modelo por vez ao ensemble. a cada entrada de modelo, otimizar com PSO
