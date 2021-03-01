@@ -128,8 +128,10 @@ for i in range(1,Y_teste.shape[0]):
 
 ## RMSE de teste
 # retornar para a escala normal
+Y_treino_desnorm = scaler.inverse_transform(Y_treino)
 Y_teste_desnorm = scaler.inverse_transform(Y_teste)
 Y_pred_desnorm = scaler.inverse_transform(Y_pred)
+
 
 # print(Y_teste_desnorm)
 # print(Y_pred_desnorm)
@@ -149,9 +151,12 @@ plt.show()
 # Utilizar a função gera_pool
 pool_size = 100
 elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
+predictions_training_pool = [p.predict(X_treino) for p in elm_pool]
+
 predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 
 # scaler inverse
+predictions_training_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_training_pool]
 predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_pool]
 # predictions_pool_mean = np.mean(predictions_pool_desnorm, axis=0)
 # predictions_pool_median = np.quantile(predictions_pool_desnorm, 0.5)
@@ -177,7 +182,8 @@ print('--------------------')
 
 # Initialize swarm
 
-Y_pred_desnorm = np.array(predictions_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
+# Y_pred_desnorm = np.array(predictions_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
+Y_pred_desnorm = np.array(predictions_training_pool_desnorm).reshape(990, pool_size) # treinamento
 
 def weighted_average_ensemble(p):
     pnorm = p/p.sum()
@@ -186,16 +192,18 @@ def weighted_average_ensemble(p):
     return res
 
 def forward(pesos):
-	Y_pred = weighted_average_ensemble(pesos)
-	loss = mean_squared_error(Y_teste, Y_pred, squared=True)
-	return loss
-
+	
+    Y_pred = weighted_average_ensemble(pesos)
+	# loss = mean_squared_error(Y_teste, Y_pred, squared=True) # rmse
+    # treinamento
+    loss = mean_squared_error(Y_treino_desnorm, Y_pred, squared=True)  
+    
+    return loss
 
 def f(x):
 	"""
 	Higher-level method to do the fitness in the whole swarm
 	"""
-
 	n_particles = x.shape[0]
 	j = [forward(x[i]) for i in range(n_particles)]
 	return np.array(j)
@@ -204,7 +212,7 @@ def f(x):
 options = {'c1': 1.49618, 'c2': 1.49618, 'w':0.7298}
 optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=pool_size, options=options)
 # Perform optimization
-cost, pos = optimizer.optimize(f, iters=100)
+cost, pos = optimizer.optimize(f, iters=1000)
 
 print('cost: ', cost)
 print('pos: ', pos)

@@ -66,28 +66,6 @@ def pred_pool(pool, n_in, Y_teste, X_teste):
 #### Essa função vai pegar os pesos, normalizá-los (wi_norm = wi/W), calcular a média ponderada e o erro RMSE
 
 
-# def weighted_average_ensemble(p):
-# 	res = p * Y_pred
-# 	return res
-
-# def forward(pesos):
-
-# 	Y_pred = weighted_average_ensemble(pesos)
-# 	loss = mean_squared_error(Y, Y_pred, squared=True)
-# 	return loss
-
-
-# def f(x):
-# 	"""
-# 	Higher-level method to do the fitness in the whole swarm
-# 	"""
-
-# 	n_particles = x.shape[0]
-# 	j = [forward(x[i]) for i in range(n_particles)]
-# 	return np.array(j)
-	
-
-
 #TODO: função  normalized mean square error (NMSE)
 def NMSE(Y, Y_pred):
 	return (1/Y.var()) * ((Y - Y_pred)**2).mean()
