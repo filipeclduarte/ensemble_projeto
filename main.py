@@ -6,6 +6,7 @@ from utils import series_to_supervised, gera_pool, pred_pool
 from sklearn import preprocessing
 from utils import NMSE
 # usar o arg squared = True para calcular o RMSE
+np.random.seed(123)
 
 # importar ELM
 from ELM import * # importando sigmoid e a classe ELMRresgressor
@@ -113,81 +114,84 @@ Y_teste = np.copy(teste)
 # Treinar ELM
 ## Testando com 20 neurônios na camada escondida
 n_h = 20
-elm = ELMRegressor(n_h)
-elm.fit(X_treino, Y_treino)
+# elm = ELMRegressor(n_h)
+# elm.fit(X_treino, Y_treino)
 
 # Previsões
 # primeira pred
-Y_pred = np.empty(Y_teste.shape)
-Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
+# Y_pred = np.empty(Y_teste.shape)
+# Y_pred[0] = elm.predict(X_teste_pred[:,:n_in])
 X_teste_pred_pool = np.copy(X_teste_pred)
-for i in range(1,Y_teste.shape[0]):
-    X_teste_pred[:, n_in+i-1] = Y_pred[i-1] 
-    X_teste_temp = X_teste_pred[:,i:i+n_in]
-    Y_pred[i] = elm.predict(X_teste_temp)
+# for i in range(1,Y_teste.shape[0]):
+#     X_teste_pred[:, n_in+i-1] = Y_pred[i-1] 
+#     X_teste_temp = X_teste_pred[:,i:i+n_in]
+#     Y_pred[i] = elm.predict(X_teste_temp)
 
 ## RMSE de teste
 # retornar para a escala normal
 Y_treino_desnorm = scaler.inverse_transform(Y_treino)
 Y_teste_desnorm = scaler.inverse_transform(Y_teste)
-Y_pred_desnorm = scaler.inverse_transform(Y_pred)
-
+# Y_pred_desnorm = scaler.inverse_transform(Y_pred)
 
 # print(Y_teste_desnorm)
 # print(Y_pred_desnorm)
 
-RMSE = mean_squared_error(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1), squared = True)
-nmse = NMSE(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1))
-print(f'RMSE = {RMSE}')
-print(f'NMSE = {nmse}')
+# RMSE = mean_squared_error(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1), squared = True)
+# nmse = NMSE(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1))
+# print(f'RMSE = {RMSE}')
+# print(f'NMSE = {nmse}')
 
 ## Plotar 
-plt.plot(Y_teste_desnorm.reshape(-1,1), label='Real')
-plt.plot(Y_pred_desnorm.reshape(-1,1), label='Prediction')
-plt.legend()
-plt.title('Teste')
-plt.show()
+# plt.plot(Y_teste_desnorm.reshape(-1,1), label='Real')
+# plt.plot(Y_pred_desnorm.reshape(-1,1), label='Prediction')
+# plt.legend()
+# plt.title('Teste')
+# plt.show()
 
 # Utilizar a função gera_pool
 pool_size = 100
 elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
-predictions_training_pool = [p.predict(X_treino) for p in elm_pool]
 
-predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
+# previsão do pool no treinamento
+predictions_treino_pool = [p.predict(X_treino) for p in elm_pool]
 
-# scaler inverse
-predictions_training_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_training_pool]
-predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_pool]
+predictions_teste_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
+
+# scaler inverse da previsao
+predictions_treino_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_treino_pool]
+predictions_teste_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_teste_pool]
+
 # predictions_pool_mean = np.mean(predictions_pool_desnorm, axis=0)
 # predictions_pool_median = np.quantile(predictions_pool_desnorm, 0.5)
 
 # calcular RMSE
-RMSE_pool = np.array([mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm])
-NMSE_pool = np.array([NMSE(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1)) for p in predictions_pool_desnorm])
-# print('RMSE_pool\n', RMSE_pool)
-print('RMSE Argmin: ', RMSE_pool.argmin())
-print('RMSE min: ', RMSE_pool.min())
-print('RMSE médio: ', RMSE_pool.mean())
-print('RMSE mediano: ', np.quantile(RMSE_pool, 0.5))
-print('RMSE std: ', RMSE_pool.std(ddof=1))
-print('-----------------------------------')
-print('NMSE Argmin: ', NMSE_pool.argmin())
-print('NMSE min: ', NMSE_pool.min())
-print('NMSE médio: ', NMSE_pool.mean())
-print('NMSE mediano: ', np.quantile(NMSE_pool,0.5))
-print('NMSE std: ', NMSE_pool.std(ddof=1))
+# RMSE_pool = np.array([mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm])
+# NMSE_pool = np.array([NMSE(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1)) for p in predictions_pool_desnorm])
+# # print('RMSE_pool\n', RMSE_pool)
+# print('RMSE Argmin: ', RMSE_pool.argmin())
+# print('RMSE min: ', RMSE_pool.min())
+# print('RMSE médio: ', RMSE_pool.mean())
+# print('RMSE mediano: ', np.quantile(RMSE_pool, 0.5))
+# print('RMSE std: ', RMSE_pool.std(ddof=1))
+# print('-----------------------------------')
+# print('NMSE Argmin: ', NMSE_pool.argmin())
+# print('NMSE min: ', NMSE_pool.min())
+# print('NMSE médio: ', NMSE_pool.mean())
+# print('NMSE mediano: ', np.quantile(NMSE_pool,0.5))
+# print('NMSE std: ', NMSE_pool.std(ddof=1))
 
 print('\nInicializar PSO')
 print('--------------------')
 
 # Initialize swarm
 
-# Y_pred_desnorm = np.array(predictions_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
-Y_pred_desnorm = np.array(predictions_training_pool_desnorm).reshape(990, pool_size) # treinamento
+Y_pred_teste_desnorm = np.array(predictions_teste_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
+# Y_pred_desnorm = np.array(predictions_treino_pool_desnorm).reshape(990, pool_size) # treinamento
+Y_pred_treino = np.array(predictions_treino_pool).reshape(990, pool_size)
 
 def weighted_average_ensemble(p):
     pnorm = p/p.sum()
-    res = (pnorm * Y_pred_desnorm).sum(axis=1, keepdims=True)
+    res = (pnorm * Y_pred_treino).sum(axis=1, keepdims=True)
 	
     return res
 
@@ -196,7 +200,7 @@ def forward(pesos):
     Y_pred = weighted_average_ensemble(pesos)
 	# loss = mean_squared_error(Y_teste, Y_pred, squared=True) # rmse
     # treinamento
-    loss = mean_squared_error(Y_treino_desnorm, Y_pred, squared=True)  
+    loss = mean_squared_error(Y_treino, Y_pred, squared=True)  
     
     return loss
 
@@ -212,10 +216,29 @@ def f(x):
 options = {'c1': 1.49618, 'c2': 1.49618, 'w':0.7298}
 optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=pool_size, options=options)
 # Perform optimization
-cost, pos = optimizer.optimize(f, iters=1000)
+cost, pos = optimizer.optimize(f, iters=100)
 
-print('cost: ', cost)
-print('pos: ', pos)
+# aplicar pesos aos dados de teste
+pesos_pso = np.array(pos).reshape(-1,1)
+# normalizar
+pesos_pso_norm = pesos_pso/pesos_pso.sum()
+Y_pred_teste = np.array(predictions_teste_pool).reshape(100, pool_size)
+Y_pred_ensemble = (pesos_pso_norm * Y_pred_teste).sum(axis=1, keepdims=True)
+loss = mean_squared_error(Y_teste, Y_pred_ensemble, squared=True) # rmse
+nmse_loss = NMSE(Y_teste, Y_pred_ensemble)
+print('Loss RMSE: ', loss)
+print('Loss NMSE: ', nmse_loss)
+
+# gráfico
+plt.plot(Y_teste_desnorm, label='Real output')
+plt.plot(scaler.inverse_transform(Y_pred_ensemble), label='Ensemble output')
+plt.plot(Y_pred_teste_desnorm.mean(axis=1), label='Média')
+plt.plot(np.quantile(Y_pred_teste_desnorm, q=0.5, axis=1), label='Mediana')
+plt.legend()
+plt.grid()
+plt.show()
+
+ # test_size, pool_size
 #TODO: Ordenar ELM pelo erro
 
 #TODO: Adicionar um modelo por vez ao ensemble. a cada entrada de modelo, otimizar com PSO
