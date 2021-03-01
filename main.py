@@ -4,6 +4,7 @@ from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from utils import series_to_supervised, gera_pool, pred_pool
 from sklearn import preprocessing
+from utils import NMSE
 # usar o arg squared = True para calcular o RMSE
 
 # importar ELM
@@ -106,7 +107,8 @@ Y_treino = df_treino_sup['var1(t)'].values
 
 df_teste_sup = series_to_supervised(teste.reshape(-1,1), n_in=n_in)
 X_teste = df_teste_sup.drop(columns='var1(t)').values
-Y_teste = df_teste_sup['var1(t)'].values
+# Y_teste = df_teste_sup['var1(t)'].values
+Y_teste = np.copy(teste)
 
 # Treinar ELM
 ## Testando com 20 neurônios na camada escondida
@@ -129,11 +131,13 @@ for i in range(1,Y_teste.shape[0]):
 Y_teste_desnorm = scaler.inverse_transform(Y_teste)
 Y_pred_desnorm = scaler.inverse_transform(Y_pred)
 
-print(Y_teste_desnorm)
-print(Y_pred_desnorm)
+# print(Y_teste_desnorm)
+# print(Y_pred_desnorm)
 
 RMSE = mean_squared_error(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1), squared = True)
+nmse = NMSE(Y_teste_desnorm.reshape(-1,1), Y_pred_desnorm.reshape(-1,1))
 print(f'RMSE = {RMSE}')
+print(f'NMSE = {nmse}')
 
 ## Plotar 
 plt.plot(Y_teste_desnorm.reshape(-1,1), label='Real')
@@ -152,11 +156,20 @@ predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_poo
 
 # calcular RMSE
 RMSE_pool = np.array([mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm])
-print('RMSE_pool\n', RMSE_pool)
-print('Argmin: ', RMSE_pool.argmin())
+NMSE_pool = np.array([NMSE(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1)) for p in predictions_pool_desnorm])
+# print('RMSE_pool\n', RMSE_pool)
+print('RMSE Argmin: ', RMSE_pool.argmin())
 print('RMSE min: ', RMSE_pool.min())
 print('RMSE médio: ', RMSE_pool.mean())
+print('RMSE mediano: ', np.quantile(RMSE_pool, 0.5))
 print('RMSE std: ', RMSE_pool.std(ddof=1))
+print('-----------------------------------')
+print('NMSE Argmin: ', NMSE_pool.argmin())
+print('NMSE min: ', NMSE_pool.min())
+print('NMSE médio: ', NMSE_pool.mean())
+print('NMSE mediano: ', np.quantile(NMSE_pool,0.5))
+print('NMSE std: ', NMSE_pool.std(ddof=1))
+
 
 #TODO: Ordenar ELM pelo erro
 
