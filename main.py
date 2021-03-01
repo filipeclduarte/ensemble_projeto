@@ -180,11 +180,12 @@ print('--------------------')
 Y_pred_desnorm = np.array(predictions_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
 
 def weighted_average_ensemble(p):
-	res = p * Y_pred_desnorm
-	return res
+    pnorm = p/p.sum()
+    res = (pnorm * Y_pred_desnorm).sum(axis=1, keepdims=True)
+	
+    return res
 
 def forward(pesos):
-
 	Y_pred = weighted_average_ensemble(pesos)
 	loss = mean_squared_error(Y_teste, Y_pred, squared=True)
 	return loss
