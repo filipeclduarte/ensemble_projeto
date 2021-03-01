@@ -190,7 +190,7 @@ Y_pred_treino = np.array(predictions_treino_pool).reshape(990, pool_size)
 
 def weighted_average_ensemble(p):
     pnorm = p/p.sum()
-    res = (pnorm * Y_pred_treino).sum(axis=1, keepdims=True)
+    res = 1/Y_pred_treino.shape[0] * (pnorm * Y_pred_treino).sum(axis=1, keepdims=True)
 	
     return res
 
@@ -222,7 +222,7 @@ pesos_pso = np.array(pos)
 # normalizar
 pesos_pso_norm = pesos_pso/pesos_pso.sum()
 Y_pred_teste = np.array(predictions_teste_pool).reshape(100, pool_size)
-Y_pred_ensemble = (pesos_pso_norm * Y_pred_teste).sum(axis=1, keepdims=True)
+Y_pred_ensemble = 1/Y_pred_teste.shape[0] * (pesos_pso_norm * Y_pred_teste).sum(axis=1, keepdims=True)
 loss = mean_squared_error(Y_teste, Y_pred_ensemble, squared=True) # rmse
 nmse_loss = NMSE(Y_teste, Y_pred_ensemble)
 print('Loss RMSE: ', loss)
