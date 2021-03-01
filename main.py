@@ -154,6 +154,7 @@ elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
 
 # previsão do pool no treinamento
 predictions_treino_pool = [p.predict(X_treino) for p in elm_pool]
+
 # previsão do pool no teste
 predictions_teste_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 
@@ -217,7 +218,7 @@ optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=pool_size, optio
 cost, pos = optimizer.optimize(f, iters=100)
 
 # aplicar pesos aos dados de teste
-pesos_pso = np.array(pos).reshape(-1,1)
+pesos_pso = np.array(pos)
 # normalizar
 pesos_pso_norm = pesos_pso/pesos_pso.sum()
 Y_pred_teste = np.array(predictions_teste_pool).reshape(100, pool_size)
