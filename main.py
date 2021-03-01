@@ -153,6 +153,8 @@ predictions_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 
 # scaler inverse
 predictions_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_pool]
+# predictions_pool_mean = np.mean(predictions_pool_desnorm, axis=0)
+# predictions_pool_median = np.quantile(predictions_pool_desnorm, 0.5)
 
 # calcular RMSE
 RMSE_pool = np.array([mean_squared_error(Y_teste_desnorm.reshape(-1,1), p.reshape(-1,1), squared = True) for p in predictions_pool_desnorm])
