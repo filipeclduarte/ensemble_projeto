@@ -64,3 +64,7 @@ def pred_pool(pool, n_in, Y_teste, X_teste):
 #TODO: Implementar função que será otimizada pelo algoritmo PSO
 #### Essa função vai pegar os pesos, normalizá-los (wi_norm = wi/W), calcular a média ponderada e o erro RMSE
  
+#TODO: função  normalized mean square error (NMSE)
+def NMSE(Y, Y_pred):
+	return (1/Y.var()) * ((Y - Y_pred)**2).mean()
+
