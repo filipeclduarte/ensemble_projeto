@@ -110,7 +110,7 @@ df_teste_sup = series_to_supervised(teste.reshape(-1,1), n_in=n_in)
 X_teste = df_teste_sup.drop(columns='var1(t)').values
 # Y_teste = df_teste_sup['var1(t)'].values
 Y_teste = np.copy(teste)
-
+    
 # Treinar ELM
 ## Testando com 20 neurônios na camada escondida
 n_h = 20
@@ -154,7 +154,7 @@ elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
 
 # previsão do pool no treinamento
 predictions_treino_pool = [p.predict(X_treino) for p in elm_pool]
-
+# previsão do pool no teste
 predictions_teste_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 
 # scaler inverse da previsao
@@ -183,8 +183,6 @@ predictions_teste_pool_desnorm = [scaler.inverse_transform(p) for p in predictio
 print('\nInicializar PSO')
 print('--------------------')
 
-# Initialize swarm
-
 Y_pred_teste_desnorm = np.array(predictions_teste_pool_desnorm).reshape(100, pool_size) # test_size, pool_size
 # Y_pred_desnorm = np.array(predictions_treino_pool_desnorm).reshape(990, pool_size) # treinamento
 Y_pred_treino = np.array(predictions_treino_pool).reshape(990, pool_size)
@@ -212,7 +210,7 @@ def f(x):
 	j = [forward(x[i]) for i in range(n_particles)]
 	return np.array(j)
 	
-
+# inicializar swarm
 options = {'c1': 1.49618, 'c2': 1.49618, 'w':0.7298}
 optimizer = ps.single.GlobalBestPSO(n_particles=100, dimensions=pool_size, options=options)
 # Perform optimization
