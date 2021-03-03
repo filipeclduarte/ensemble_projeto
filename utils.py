@@ -38,11 +38,20 @@ def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 
 #TODO: implementar função que gera o pool de ELM
 
+# def gera_pool(N, n_h, X, Y):
+# 	pool = []
+# 	for _ in range(N):
+# 		mod = ELMRegressor(n_h)
+# 		mod.fit(X,Y)
+# 		pool.append(mod)
+# 	return pool
+
 def gera_pool(N, n_h, X, Y):
 	pool = []
-	for _ in range(N):
+	step = int(Y.shape[0] / N)
+	for i in range(N):
 		mod = ELMRegressor(n_h)
-		mod.fit(X,Y)
+		mod.fit(X[i:i+step,:], Y[i:i+step])
 		pool.append(mod)
 	return pool
 
@@ -55,8 +64,9 @@ def pred_pool(pool, n_in, Y_teste, X_teste):
 
 		for i in range(1,Y_teste.shape[0]):
 			X_teste_pred[:, n_in+i-1] = Y_pred[i-1]
-			X_teste_temp = X_teste_pred[:,i:i+n_in]
-			Y_pred[i] = p.predict(X_teste_temp)
+			Y_pred[i] = p.predict(X_teste_pred[:, i:i+n_in])
+			# X_teste_temp = X_teste_pred[:,i:i+n_in]
+			# Y_pred[i] = p.predict(X_teste_temp)
 		predictions.append(Y_pred)
 
 	return predictions

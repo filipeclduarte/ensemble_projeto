@@ -90,8 +90,6 @@ df = scaler.transform(df_sf['x'].values.reshape(-1,1))
 #     print('RMSE min: ', RMSE_pool.min())
 #     print(f'{n_in} RMSE médio: ', RMSE_pool.mean())
 #     print('RMSE std: ', RMSE_pool.std(ddof=1))
-
-
 n_in = 10
 
 ## treinamento as 1000 primeiras obs
@@ -151,16 +149,20 @@ Y_teste_desnorm = scaler.inverse_transform(Y_teste)
 # Utilizar a função gera_pool
 pool_size = 100
 elm_pool = gera_pool(pool_size, n_h, X_treino, Y_treino)
-
 # previsão do pool no treinamento
 predictions_treino_pool = [p.predict(X_treino) for p in elm_pool]
-
 # previsão do pool no teste
 predictions_teste_pool = pred_pool(elm_pool, n_in, Y_teste, X_teste_pred_pool)
 
 # scaler inverse da previsao
 predictions_treino_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_treino_pool]
 predictions_teste_pool_desnorm = [scaler.inverse_transform(p) for p in predictions_teste_pool]
+
+# # teste de plot de todas as previsões
+# plt.plot(Y_teste_desnorm, label='Y_teste')
+# [plt.plot(t) for t in predictions_teste_pool_desnorm[:5]]
+# plt.legend()
+# plt.show()
 
 # predictions_pool_mean = np.mean(predictions_pool_desnorm, axis=0)
 # predictions_pool_median = np.quantile(predictions_pool_desnorm, 0.5)
@@ -195,10 +197,7 @@ def weighted_average_ensemble(p):
     return res
 
 def forward(pesos):
-	
     Y_pred = weighted_average_ensemble(pesos)
-	# loss = mean_squared_error(Y_teste, Y_pred, squared=True) # rmse
-    # treinamento
     loss = mean_squared_error(Y_treino, Y_pred, squared=True)  
     
     return loss
@@ -219,14 +218,34 @@ cost, pos = optimizer.optimize(f, iters=100)
 
 # aplicar pesos aos dados de teste
 pesos_pso = np.array(pos)
-# normalizar
+# normalizar pesos
 pesos_pso_norm = pesos_pso/pesos_pso.sum()
+
+# calcular a previsão do Ensemble
 Y_pred_teste = np.array(predictions_teste_pool).reshape(100, pool_size)
 Y_pred_ensemble = 1/Y_pred_teste.shape[0] * (pesos_pso_norm * Y_pred_teste).sum(axis=1, keepdims=True)
+
+print('Y_pred_ensemble:', Y_pred_ensemble[:5])
+print('Y_teste: ', Y_teste[:5])
+
+# calcular o erro
 loss = mean_squared_error(Y_teste, Y_pred_ensemble, squared=True) # rmse
 nmse_loss = NMSE(Y_teste, Y_pred_ensemble)
-print('Loss RMSE: ', loss)
-print('Loss NMSE: ', nmse_loss)
+
+print('Ensemble')
+print('RMSE: ', loss)
+print('NMSE: ', nmse_loss)
+
+print('-------')
+print('Média')
+print('RMSE: ', mean_squared_error(Y_teste, Y_pred_teste.mean(axis=1), squared=True))
+print('NMSE: ', NMSE(Y_teste, Y_pred_teste.mean(axis=1)))
+
+print('------ ')
+print('Mediana')
+print('RMSE: ', mean_squared_error(Y_teste, np.quantile(Y_pred_teste, 0.5, axis=1), squared=True))
+print('NMSE: ', NMSE(Y_teste, np.quantile(Y_pred_teste,0.5, axis=1)))
+
 
 # gráfico
 plt.plot(Y_teste_desnorm, label='Real output')
