@@ -78,5 +78,6 @@ def pred_pool(pool, n_in, Y_teste, X_teste):
 
 #TODO: função  normalized mean square error (NMSE)
 def NMSE(Y, Y_pred):
-	return (1/Y.var()) * ((Y - Y_pred)**2).mean()
+	# return (1/Y.var()) * ((Y - Y_pred)**2).mean()
+	return mean_squared_error(Y, Y_pred)/Y.var()
 
