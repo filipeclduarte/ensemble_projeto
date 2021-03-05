@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error
-from ELM import *
+# from ELM import *
+from skelm import ELMRegressor
 
 def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
 	"""
@@ -50,7 +51,7 @@ def gera_pool(N, n_h, X, Y):
 	pool = []
 	step = int(Y.shape[0] / N)
 	for i in range(N):
-		mod = ELMRegressor(n_h)
+		mod = ELMRegressor(n_neurons=n_h, ufunc='sigm')
 		mod.fit(X[i:i+step,:], Y[i:i+step])
 		pool.append(mod)
 	return pool
