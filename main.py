@@ -25,7 +25,7 @@ df = scaler.transform(df_sf['x'].values.reshape(-1,1))
 
 n_in = 10
 n_inputs = [i for i in range(10, 110, 10)]
-n_hidden = [i for i in range(10, 110, 10)]
+n_hidden = [i for i in range(10, 200, 10)]
 pool_size = 100
 
 ## treinamento as 1000 primeiras obs
@@ -86,15 +86,15 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
             pesos_pso_norm = pesos_pso_temp/pesos_pso_temp.sum()
             pesos_pso.append(pesos_pso_norm)
 
-    return pool, pesos_pso, cost
+    return pool, np.array(pesos_pso), np.array(cost)
 
 elm_pool, pesos_pso, loss = treinamento(treino, n_inputs, n_hidden, pool_size)
 
 print('elm_pool')
 print(elm_pool)
 print('loss')
-pritn(loss)
-
+print(loss)
+np.savetxt('resultados_loss.txt', loss)
 # # Estruturar os dados
 # ## transformar o problema de série em supervised learning
 # ### testando com 10 obs passadas
