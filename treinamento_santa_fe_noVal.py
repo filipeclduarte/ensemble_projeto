@@ -25,10 +25,10 @@ n_hidden = [20, 50, 100, 110, 150, 160, 170]
 pool_size = 100
 
 treino = df[:1000]
-teste = df[1000:]
-Y_teste = np.copy(teste)
+# teste = df[1000:]
+# Y_teste = np.copy(teste)
 
-def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
+def treinamento(df, serie_treino, n_inputs, n_hidden, pool_size):
     # pool = np.empty(shape=(len(n_inputs), pool_size), dtype=ELMRegressor)
     # pesos_pso = []
     # erros = []
@@ -43,16 +43,17 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
         X_treino = df_treino_sup.drop(columns='var1(t)').values
         Y_treino = df_treino_sup['var1(t)'].values
 
-        len_treino = int(X_treino.shape[0] * 0.8)
+        # len_treino = int(X_treino.shape[0] * 0.8)
 
         resultados_n_h = dict.fromkeys(n_hidden)
-        X_treino1 = X_treino[:len_treino]
+        # X_treino1 = X_treino[:len_treino]
         # X_val = X_treino[len_treino:]
 
         # Y_treino1 = Y_treino[:len_treino]
-        Y_val = Y_treino[len_treino:]
+        # Y_val = Y_treino[len_treino:]
 
-        X_val_pred = serie_treino[(len_treino-n_in):].T
+        X_val_pred = df[(1000-n_in):].T
+        # X_val_pred = serie_treino[(len_treino-n_in):].T
 
 
         for (j, n_h) in enumerate(n_hidden):
@@ -60,23 +61,23 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
             print('n_h:', n_h)
             
             pool_temp = np.array(gera_pool(pool_size, n_h, X_treino, Y_treino))
-            # predictions_treino_pool = [p.predict(X_treino) for p in pool_temp]
-            predictions_treino_pool = [p.predict(X_treino1) for p in pool_temp]
+            predictions_treino_pool = [p.predict(X_treino) for p in pool_temp]
             
             X_val_pred_pool = np.copy(X_val_pred)
+            print('X_val_pred.shape:', X_val_pred_pool.shape)
 
-            predictions_val_pool = pred_pool(pool_temp, n_in, Y_val, X_val_pred_pool)
+            # predictions_val_pool = pred_pool(pool_temp, n_in, Y_treino, X_val_pred_pool)
 
-            # Y_pred_treino = np.array(predictions_treino_pool).reshape(-1, pool_size)
-            Y_pred_val = np.array(predictions_val_pool).reshape(-1, pool_size)
-            # rmse_temp = [mean_squared_error(Y_treino, Y_pred_p, squared=True) for Y_pred_p in predictions_treino_pool]
+            Y_pred_treino = np.array(predictions_treino_pool).reshape(-1, pool_size)
+            # Y_pred_val = np.array(predictions_val_pool).reshape(-1, pool_size)
+            rmse_temp = [mean_squared_error(Y_treino, Y_pred_p, squared=True) for Y_pred_p in predictions_treino_pool]
             # rmse_temp = [mean_squared_error(Y_treino1, Y_pred_p, squared=True) for Y_pred_p in predictions_treino_pool]
-            rmse_temp = [mean_squared_error(Y_val, Y_pred_p, squared=True) for Y_pred_p in predictions_val_pool]
+            # rmse_temp = [mean_squared_error(Y_treino, Y_pred_p, squared=True) for Y_pred_p in predictions_val_pool]
 
             bests_p = np.argsort(rmse_temp)
             pool[:, :] = pool_temp[bests_p]
-            # Y_pred_treino = Y_pred_treino[:,bests_p] # ordenando as previsões tbm
-            Y_pred_val = Y_pred_val[:, bests_p]
+            Y_pred_treino = Y_pred_treino[:,bests_p] # ordenando as previsões tbm
+            # Y_pred_val = Y_pred_val[:, bests_p]
 
             resultados_n_pool = dict.fromkeys(list(range(2, pool_size+1)))
 
@@ -87,9 +88,9 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
                 if n_pool == 1:
                     resultados_metricas['pool'] = pool[:, :n_pool]
                     resultados_metricas['pesos_pso'] = np.array([1.0])
-                    # resultados_metricas['erros'] = NMSE(Y_treino, Y_pred_treino[:, :n_pool])
+                    resultados_metricas['erros'] = NMSE(Y_treino, Y_pred_treino[:, :n_pool])
                     # resultados_metricas['erros'] = NMSE(Y_treino1, Y_pred_treino[:, :n_pool])
-                    resultados_metricas['erros'] = NMSE(Y_val, Y_pred_val[:,:n_pool])
+                    # resultados_metricas['erros'] = NMSE(Y_treino, Y_pred_val[:,:n_pool])
                     resultados_n_pool[n_pool] = resultados_metricas
 
                 else:
@@ -98,14 +99,14 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
                         pnorm = np.nan_to_num(np.exp(p)/np.exp(p).sum()) # testando com norm exp
                         # pnorm = np.nan_to_num((p - p.min())/(p - p.min()).sum())
                         # res = 1/Y_pred_treino[:, :n_pool].shape[0] * (pnorm * Y_pred_treino[:, :n_pool]).sum(axis=1, keepdims=True)
-                        # res = (pnorm * Y_pred_treino[:, :n_pool]).sum(axis=1, keepdims=True)
-                        res = (pnorm * Y_pred_val[:, :n_pool]).sum(axis=1, keepdims=True)
+                        res = (pnorm * Y_pred_treino[:, :n_pool]).sum(axis=1, keepdims=True)
+                        # res = (pnorm * Y_pred_val[:, :n_pool]).sum(axis=1, keepdims=True)
                         return res
 
                     def forward(pesos):
                         Y_pred = weighted_average_ensemble(pesos)
                         # loss = NMSE(Y_treino, Y_pred)
-                        loss = NMSE(Y_val, Y_pred)
+                        loss = NMSE(Y_treino, Y_pred)
                         return loss
 
                     def f(x):
@@ -134,7 +135,7 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
 
     return resultados
 
-resultados_dict = treinamento(treino, n_inputs, n_hidden, pool_size = 100)
+resultados_dict = treinamento(df, treino, n_inputs, n_hidden, pool_size = 100)
 
 # np.save('resultados/pool.npy', pool)
 # np.save('resultados/pesos_pso.npy', pesos_pso)
@@ -142,7 +143,7 @@ resultados_dict = treinamento(treino, n_inputs, n_hidden, pool_size = 100)
 
 import pickle
 
-with open('resultados/resultados_treinamento.pickle', 'wb') as file:
+with open('resultados/resultados_treinamento_noVal.pickle', 'wb') as file:
     pickle.dump(resultados_dict, file)
 
 

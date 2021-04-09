@@ -11,21 +11,21 @@ import pyswarms as ps
 from skelm import ELMRegressor
 
 # importando dados Santa Fe
-df_sf = pd.read_csv('dados/df_santa_fe.csv')
+df_sf = pd.read_csv('dados/df.csv')
 
 # normalização gaussiana
-scaler = preprocessing.StandardScaler().fit(df_sf['x'].values.reshape(-1,1))
-df = scaler.transform(df_sf['x'].values.reshape(-1,1))
+scaler = preprocessing.StandardScaler().fit(df_sf['value'].values.reshape(-1,1))
+df = scaler.transform(df_sf['value'].values.reshape(-1,1))
 
 # n_inputs = [i for i in range(10, 210, 10)]
 # n_hidden = [i for i in range(10, 160, 10)]
-n_inputs = [10,20,30,40,50,100,150]
-n_hidden = [20, 50, 100, 110, 150, 160, 170]
+n_inputs = [30,40,50,60,90]
+n_hidden = [100, 150, 160, 140]
 
 pool_size = 100
 
-treino = df[:1000]
-teste = df[1000:]
+treino = df[:5000]
+teste = df[5000:24203]
 Y_teste = np.copy(teste)
 
 def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
@@ -82,7 +82,7 @@ def treinamento(serie_treino, n_inputs, n_hidden, pool_size):
 
             # for n_pool in range(2,pool_size+1):
             for n_pool in range(1, pool_size+1):
-                print('n_pool:', n_pool)
+                print('n_pool:', n_pool, 'n_in:', n_in, 'n_h:', n_h)
                 resultados_metricas = dict.fromkeys(metricas)
                 if n_pool == 1:
                     resultados_metricas['pool'] = pool[:, :n_pool]
@@ -142,7 +142,7 @@ resultados_dict = treinamento(treino, n_inputs, n_hidden, pool_size = 100)
 
 import pickle
 
-with open('resultados/resultados_treinamento.pickle', 'wb') as file:
+with open('resultados/resultados_treinamento_validation.pickle', 'wb') as file:
     pickle.dump(resultados_dict, file)
 
 

@@ -13,9 +13,6 @@ with open('dados/2016.pkl', 'rb') as file:
 
 # visualizar dados
 
-# dados_2014['01']['01']['included'][0]['attributes']['values'][0]['value']
-# dados_2014['01']['01']['included'][0]['attributes']['values'][0]['datetime']
-
 df = pd.DataFrame({'datetime':[], 'value':[]})
 value = []
 datetime = []
