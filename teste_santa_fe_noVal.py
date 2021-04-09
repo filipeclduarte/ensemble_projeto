@@ -93,12 +93,3 @@ resultados_teste = test(df, resultados_treinamento, 100, n_inputs, n_hidden, sca
 
 with open('resultados/resultados_teste_noVal.pickle', 'wb') as file:
     pickle.dump(resultados_teste, file)
-
-#TODO: ler dados de previsão gerados pelo script treinamento.py
-#TODO: utilizar os ensembles gerados para calcular as previsões
-#TODO: salvar resultados da melhor ELM, Melhor Ensemble, Média e Mediana do ensemble
-#TODO: criar dados da paisagem (treinamento - RMSE x inputs x hidden
-#TODO: criar gráfico RMSE em função do número de modelos no ensemble e mostrar PSO, Média e Mediana
-#TODO: Desnormalizar e plotar gráficos e calcular o RMSE!!!
-#TODO: EXPLICAR AO PROFESSOR O TEMPO DE PROCESSAMENTO SE TORNOU INVIÁVEL (MOSTRAR A CONTA DE QUANTO TEMPO DEMORARIA PARA RODAR TUDO!!!!!)
-#TODO: Eles fazem 10 execcuções, teria que multiplicar todo o tempo vezes 10
