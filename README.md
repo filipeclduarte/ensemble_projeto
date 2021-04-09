@@ -43,6 +43,8 @@ Dependências:
 
 ## Experimento I: Santa Fé Laser Strength
 
+obs.: deve-se criar uma pasta chamada "resultados" no diretório principal para armazenar os resultados dos scripts abaixo.
+
 1. executar script de treinamento no terminal:
 `
 python treinamento_santa_fe.py
